@@ -10,8 +10,10 @@ init:
 	ld ($ff00+R_STAT),a
 	ld ($ff00+R_TAC),a
 	ld ($ff00+R_SC),a
-	xor a
+	
+	ld a,$0a
 	ld ($1111),a
+	xor a
 
 	call disableLcd
 

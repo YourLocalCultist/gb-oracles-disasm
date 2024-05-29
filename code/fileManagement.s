@@ -129,12 +129,12 @@ eraseFile:
 ; @param bc
 @clearFile:
 	ld a,$0a
-	ld ($1111),a
+	;ld ($1111),a
 	ld l,c
 	ld h,b
 	call clearFileAtHl
 	xor a
-	ld ($1111),a
+	;ld ($1111),a
 	ret
 
 ;;
@@ -210,11 +210,11 @@ verifyFileCopies:
 copyFileFromHlToDe:
 	push hl
 	ld a,$0a
-	ld ($1111),a
+	;ld ($1111),a
 	ld bc,$0550
 	call copyMemoryBc
 	xor a
-	ld ($1111),a
+	;ld ($1111),a
 	pop hl
 	ret
 
@@ -225,7 +225,7 @@ copyFileFromHlToDe:
 verifyFileAtHl:
 	push hl
 	ld a,$0a
-	ld ($1111),a
+	;ld ($1111),a
 
 	; Verify checksum
 	call calculateFileChecksum
@@ -251,7 +251,7 @@ verifyFileAtHl:
 
 @verifyDone:
 	xor a
-	ld ($1111),a
+	;ld ($1111),a
 	pop hl
 	ld a,b
 	rrca

@@ -6,12 +6,12 @@
 
 	SLOTSIZE $1000
 	SLOT 2 $c000
-	SLOT 3 $d000
+	SLOT 3 $a000
 .endme
 
 .banksize $4000
 .rombanks 64
-.ramsize $02 ; 1 RAM bank
+.ramsize $04 ; 1 RAM bank
 
 .nintendologo
 .romgbconly
