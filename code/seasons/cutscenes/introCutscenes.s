@@ -1050,10 +1050,10 @@ seasonsFunc_03_7a6b:
 
 seasonsFunc_03_7a88:
 	ldh (<hFF8B),a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$04
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$d000
 	ld bc,$0240
 	call clearMemoryBc
@@ -1062,7 +1062,7 @@ seasonsFunc_03_7a88:
 	ldh a,(<hFF8B)
 	call fillMemoryBc
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 seasonsFunc_03_7aa9:
@@ -1402,15 +1402,15 @@ cutscene0eFunc7:
 
 cutscene0dFunca:
 	call disableLcd
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$de80
 	ld b,$40
 	call clearMemory
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call clearScreenVariablesAndWramBank1
 	call clearOam
 	ld a,PALH_0f
@@ -1456,10 +1456,10 @@ cutscene0dFuncc:
 	jp setGlobalFlag
 
 seasonsFunc_03_7db8:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$d800
 	ld bc,$0240
 	call clearMemoryBc
@@ -1468,5 +1468,5 @@ seasonsFunc_03_7db8:
 	ld a,$02
 	call fillMemoryBc
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret

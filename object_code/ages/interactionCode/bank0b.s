@@ -3674,13 +3674,13 @@ interactionCodeae:
 	ret
 
 @label_0b_234:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld l,Interaction.counter1
 	ld a,(hl)
 	ld b,a
 	ld a,:w4TileMap
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	ld hl,w4TileMap
 	rst_addDoubleIndex
@@ -3699,7 +3699,7 @@ interactionCodeae:
 	call loadUncompressedGfxHeader
 	pop de
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld h,d
 	ld l,Interaction.counter1
@@ -3731,7 +3731,7 @@ interactionCodeae:
 
 @label_0b_236:
 	push de
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,(hl) ; [counter1]
 	ld b,a
@@ -3746,14 +3746,14 @@ interactionCodeae:
 @tileLoop:
 	push bc
 	ld a,:w3VramTiles
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,(de)
 	ld b,a
 	inc de
 	ld a,(de)
 	ld c,a
 	ld a,:w4TileMap
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld (hl),b
 	inc hl
 	ld (hl),c
@@ -3769,7 +3769,7 @@ interactionCodeae:
 	ld a,UNCMP_GFXH_09
 	call loadUncompressedGfxHeader
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop de
 	ret
 

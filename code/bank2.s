@@ -281,6 +281,8 @@ fileSelectMode1:
 	; Selected a non-empty file
 	call incFileSelectMode2
 	call loadFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	ld a,UNCMP_GFXH_16
 	jp loadUncompressedGfxHeader
 
@@ -335,6 +337,8 @@ fileSelectMode1:
 	call playSound
 	call incFileSelectMode2
 	call saveFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	jp fadeoutToWhite
 
 @back:
@@ -551,9 +555,13 @@ fileSelectMode3:
 	jp z,setFileSelectModeTo1
 
 	call loadFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	ld a,(wFileSelect.cursorPos)
 	ldh (<hActiveFileSlot),a
 	call saveFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	jp setFileSelectModeTo1
 
 ;;
@@ -747,6 +755,8 @@ fileSelectMode2:
 @mode0:
 	call eraseFile
 	call loadFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	xor a
 	jp copyNameToW4NameBuffer
 
@@ -759,6 +769,8 @@ fileSelectMode2:
 	ld b,$06
 	call copyMemory
 	call initializeFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 +
 	jp setFileSelectModeTo1
 
@@ -846,9 +858,13 @@ fileSelectMode6:
 	jp z,fileSelect_printError
 +
 	call loadFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	ld bc,$0400
 	call secretFunctionCaller
 	call initializeFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	jp setFileSelectModeTo1
 
 
@@ -1842,10 +1858,10 @@ func_02_494a:
 ; Load the appropriate characters based on whether it's doing name input or
 ; secret input.
 textInput_loadCharacterGfx:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w5NameEntryCharacterGfx
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	xor a
 	ld (wFileSelect.fontXor),a
 	ld de,w5NameEntryCharacterGfx
@@ -1887,7 +1903,7 @@ textInput_loadCharacterGfx:
 .endif
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -1921,6 +1937,8 @@ loadFileDisplayVariables:
 	ldh (<hActiveFileSlot),a
 @nextFile:
 	call loadFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	ldh a,(<hActiveFileSlot)
 	ld d,$00
 	call getFileDisplayVariableAddress
@@ -2392,6 +2410,8 @@ fileSelectMode7:
 	ret nz
 
 	call loadFile
+	ld a,(wSRAMBank)
+	call changeSRAMBank
 
 	; set hl = wRingFortuneStuff + fileIndex * $16
 	ld a,(wFileSelect.cursorPos)
@@ -2415,6 +2435,8 @@ fileSelectMode7:
 	ld l,<wFileIsCompleted
 	ld (hl),$00
 	call initializeFile
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 	ld a,SND_SELECTITEM
 	call playSound
 	jp setFileSelectModeTo1
@@ -2459,7 +2481,7 @@ fileSelectMode7:
 fileSelect_redrawDecorationsAndSetWramBank4:
 	call clearOam
 	ld a,$04
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,@sprites
 	jp addSpritesToOam
 
@@ -2875,7 +2897,7 @@ runBank2Function:
 ;;
 hideStatusBar_body:
 	ld a,$04
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,wDontUpdateStatusBar
 
 	; If (wDontUpdateStatusBar) isn't $77, set the sprite priority bit?
@@ -2938,11 +2960,11 @@ copyW2TilesetBgPalettesToW4PaletteData_body:
 	ld b,$80
 -
 	ld a,:w2TilesetBgPalettes
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld c,(hl)
 	inc l
 	ld a,:w4PaletteData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,c
 	ld (de),a
 	inc de
@@ -2961,11 +2983,11 @@ copyW4PaletteDataToW2TilesetBgPalettes_body:
 	ld b,$80
 -
 	ld a,:w4PaletteData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld c,(hl)
 	inc l
 	ld a,:w2TilesetBgPalettes
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,c
 	ld (de),a
 	inc de
@@ -3117,7 +3139,7 @@ saveGraphicsOnEnterMenu_body:
 	call disableLcd
 	call copyW2TilesetBgPalettesToW4PaletteData_body
 	ld a,:w4SavedOam
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,wOam
 	ld de,w4SavedOam
 	ld b,$a0
@@ -3160,7 +3182,7 @@ reloadGraphicsOnExitMenu_body:
 	push de
 	call disableLcd
 	ld a,:w4SavedOam
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,$8601
 	ldbc $17, :w4SavedVramTiles
 	ld hl,w4SavedVramTiles
@@ -3332,7 +3354,7 @@ updateStatusBar_body:
 	ret nz
 
 	ld a,$04
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call loadStatusBarMap
 
 	; Check whether A and B items need refresh
@@ -3471,7 +3493,7 @@ updateStatusBar_body:
 	ld (hl),a
 +
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,(wcbe8)
 	bit 7,a
 	jr nz,@biggoronSword
@@ -3722,7 +3744,7 @@ drawItemTilesOnStatusBar:
 	ret nz
 
 	ld a,$04
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,(wInventoryB)
 	ld de,wBItemTreasure
 	call loadEquippedItemSpriteData
@@ -4205,11 +4227,11 @@ runInventoryMenu:
 	ld a,$10
 	ldh (<hOamTail),a
 	ld a,$04
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call @inventoryMenuStates
 	call inventoryMenuDrawSprites
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	jp updateStatusBar
 
 ;;
@@ -6536,7 +6558,7 @@ runMapMenu:
 ;;
 mapMenu_state0:
 	ld a,:w4TileMap
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	call loadMinimapDisplayRoom
 	ld a,(wMapMenu.mode)
@@ -6651,7 +6673,7 @@ mapMenu_state0:
 ; Code for both overworld & dungeon maps
 @commonCode:
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call mapMenu_drawSprites
 
 	xor a
@@ -8431,7 +8453,7 @@ mapMenu_drawJewelLocations:
 ; This blanks out all unvisited tiles when opening the map screen.
 mapMenu_clearUnvisitedTiles:
 	ld a,:w4TileMap
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ldde OVERWORLD_HEIGHT, OVERWORLD_WIDTH
 	ld hl,w4TileMap + OVERWORLD_MAP_START_Y*$20 + OVERWORLD_MAP_START_X
@@ -8550,7 +8572,7 @@ dungeonMap_getLinkIconPosition:
 ; Called once when opening the dungeon map.
 dungeonMap_drawFloorList:
 	ld a,:w4TileMap
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,(wDungeonIndex)
 	ld hl,dungeonMapFloorListStartPositions
@@ -8641,11 +8663,11 @@ dungeonMap_generateScrollableTilemap:
 	ldh (<hFF8C),a
 @nextTile:
 	ld a,:w2DungeonLayout
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldi a,(hl)
 	ld c,a
 	ld a,:w4GfxBuf1
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,c
 	call dungeonMap_getTileForRoom
 	ld (de),a
@@ -8689,7 +8711,7 @@ dungeonMap_generateScrollableTilemap:
 ;
 ; Prior to calling this, w4GfxBuf stores the tilemap to be scrolled through.
 dungeonMap_updateScroll:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,(wMapMenu.dungeonScrollY)
 	call multiplyABy8
@@ -8705,7 +8727,7 @@ dungeonMap_updateScroll:
 	ld c,$08
 @nextColumn:
 	ld a,:w4GfxBuf1
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; a = tile index
 	ld a,(hl)
@@ -8743,7 +8765,7 @@ dungeonMap_updateScroll:
 	; Done drawing tiles
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Missing a "ret" opcode here.
 	; This normally doesn't seem to cause any problems, though perhaps it's related to
@@ -9386,7 +9408,7 @@ runRingMenu:
 	set TEXTBOXFLAG_BIT_NOCOLORS,(hl)
 
 	ld a,:w4TileMap
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	call @runStateCode
 
@@ -10573,8 +10595,8 @@ saveQuitMenu_checkIsGameOver:
 
 ;;
 runSaveAndQuitMenu:
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	call @runState
 	jp saveQuitMenu_drawSprites
 
@@ -10666,6 +10688,8 @@ saveQuitMenu_state1:
 	ld a,(wSaveQuitMenu.cursorIndex)
 	or a
 	call nz,saveFile ; Save for options 2 and 3
+	ld a,(wSRAMBank)
+		call changeSRAMBank
 
 	ld a,$02
 	ld (wSaveQuitMenu.state),a
@@ -10740,7 +10764,7 @@ saveQuitMenu_drawSprites:
 runSecretListMenu:
 	call clearOam
 	ld a,TEXT_BANK
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call @runState
 	jp secretListMenu_drawCursorSprite
 

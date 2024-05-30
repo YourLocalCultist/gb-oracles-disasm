@@ -71,7 +71,7 @@ cutscene02:
 ;;
 @func_7ced:
 	ld a,:w3RoomLayoutBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,$10
 	call findTileInRoom
 	jr nz,@loopEnd
@@ -90,7 +90,7 @@ cutscene02:
 	push hl
 	call setTile
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call getFreeInteractionSlot
 	jr nz,+
 
@@ -100,7 +100,7 @@ cutscene02:
 +
 	pop hl
 	ld a,:w3RoomLayoutBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,>wRoomLayout
 	ld a,(hl)
 	ld (bc),a
@@ -137,7 +137,7 @@ cutscene02:
 	jr nz,---
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 +++
 	ld a,b
@@ -176,11 +176,11 @@ cutscene1a:
 ;;
 ; CUTSCENE_TIMEWARP
 cutscene1b:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	callab bank3Cutscenes.func_03_7244
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	jp updateAllObjects
 
 ;;

@@ -199,7 +199,7 @@ cutscene14:
 	call initWaveScrollValues
 
 	ld a,:w2WaveScrollValues
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld hl,w2WaveScrollValues
 	ld b,$80
@@ -211,5 +211,5 @@ cutscene14:
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret

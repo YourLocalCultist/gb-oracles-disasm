@@ -6,7 +6,7 @@ func_4000:
 	or a
 	call nz,func_400b
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -957,7 +957,7 @@ resetFollowingLinkObjectPosition:
 	ldh (<hFF8C),a
 
 	ld a,:w2LinkWalkPath
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Fill w2LinkWalkPath with the correct values to move out from the screen edge
 	ld hl,w2LinkWalkPath + $2f
@@ -977,7 +977,7 @@ resetFollowingLinkObjectPosition:
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Initialize the object's position
 	ld a,(wFollowingLinkObjectType)
@@ -1405,10 +1405,10 @@ func_46ca:
 	ld a,(hl)
 	add $40
 	ld d,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	push de
 	ld hl,wTmpVramBuffer
 	ld b,$20
@@ -1422,7 +1422,7 @@ func_46ca:
 	ld c,$e0
 	call func_46ff
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 ;;
 func_46ff:
@@ -1469,10 +1469,10 @@ copyTileRowToVramBuffer:
 	add hl,bc
 
 	; Load wram bank
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3VramTiles
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Copy tiles to wTmpVramBuffer+$00
 	push hl
@@ -1490,7 +1490,7 @@ copyTileRowToVramBuffer:
 	call @copyFunc
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -1545,7 +1545,7 @@ cpLinkState0e:
 ; @param	c	Amplitude
 initWaveScrollValues_body:
 	ld a,:w2WaveScrollValues
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,@sineWave
 	ld hl,w2WaveScrollValues
 --
@@ -1585,7 +1585,7 @@ initWaveScrollValues_body:
 	jr nz,-
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 @sineWave:
@@ -1605,7 +1605,7 @@ initWaveScrollValues_body:
 ; @param	b	Affects the frequency of the wave?
 loadBigBufferScrollValues_body:
 	ld a,:w2WaveScrollValues
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,(wFrameCounter)
 	and $7f
 	ld c,a
@@ -1624,7 +1624,7 @@ loadBigBufferScrollValues_body:
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -1699,7 +1699,7 @@ applyPaletteFadeTransitionData:
 	ret z
 
 	ld a,:w2ColorComponentBuffer1
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	push hl
 	ldi a,(hl)
@@ -1718,7 +1718,7 @@ applyPaletteFadeTransitionData:
 	call extractColorComponents
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,$ff
 	ld (wLoadedTilesetPalette),a
@@ -1801,7 +1801,7 @@ getPaletteFadeTransitionData:
 applyPaletteFadeTransitionData:
 	inc hl
 	ld a,:w2ColorComponentBuffer1
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldi a,(hl)
 	push hl
 	swap a
@@ -1832,8 +1832,8 @@ applyPaletteFadeTransitionData:
 	ld de,w2ColorComponentBuffer2
 	call extractColorComponents
 
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 
 	ld a,$ff
 	ld (wLoadedTilesetPalette),a
@@ -1867,7 +1867,7 @@ resetFollowingLinkPath:
 	ld e,a
 
 	ld a,:w2LinkWalkPath
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Fill each entry in w2LinkWalkPath with Link's position/direction
 	ld hl,w2LinkWalkPath
@@ -1884,7 +1884,7 @@ resetFollowingLinkPath:
 
 	; Set both to 0
 	ld (wLinkPathIndex),a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Initialize object position
 	ld a,(wFollowingLinkObjectType)
@@ -1910,7 +1910,7 @@ checkUpdateFollowingLinkObject:
 
 	call @update
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 @update:
@@ -1933,7 +1933,7 @@ checkUpdateFollowingLinkObject:
 	ld e,a
 
 	ld a,:w2LinkWalkPath
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Return if Link's position/direction has not changed
 	ldi a,(hl)
@@ -1972,7 +1972,7 @@ checkUpdateFollowingLinkObject:
 	ldi (hl),a
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Update object's position
 	ld a,(wFollowingLinkObject)
@@ -2379,7 +2379,7 @@ cutscene17:
 initWaveScrollValuesForEverySecondLine:
 	call initWaveScrollValues
 	ld a,:w2WaveScrollValues
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w2WaveScrollValues
 	ld b,$80
 -
@@ -2390,7 +2390,7 @@ initWaveScrollValuesForEverySecondLine:
 	jr nz,-
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -2462,7 +2462,7 @@ cutscene15:
 @@initWaveScrollValuesInverted:
 	call initWaveScrollValues
 	ld a,:w2WaveScrollValues
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w2WaveScrollValues
 	ld b,$80
 -
@@ -2475,7 +2475,7 @@ cutscene15:
 	jr nz,-
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 @@substate1:
@@ -2492,7 +2492,7 @@ cutscene15:
 	call disableLcd
 	call clearOam
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Clear all objects except Link
 	ld hl,$d040
@@ -2596,7 +2596,7 @@ cutscene19:
 ; Load 8 bytes into wDungeonMapData and up to $100 bytes into w2DungeonLayout.
 loadDungeonLayout_b01:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call clearDungeonLayout
 	ld a,(wDungeonIndex)
 	ld hl, dungeonDataTable
@@ -2647,7 +2647,7 @@ loadDungeonLayout_b01:
 	ld (hl),a
 @end:
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	jp setVisitedRoomFlag
 
 ;;
@@ -3134,7 +3134,7 @@ paletteThread_mixBG567Palettes:
 	ld b,3*4
 ++
 	ld a,:w2TilesetBgPalettes
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 @nextColor:
 	push bc
@@ -3186,7 +3186,7 @@ paletteThread_mixBG567Palettes:
 	jr nz,@nextColor
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -4011,11 +4011,11 @@ cutscene13:
 	ld (wTilesetFlags),a
 
 	ld a,:w2DungeonLayout
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w2DungeonLayout+$3f
 	ld (hl),$ff
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,$04
 	jp fadeoutToWhiteWithDelay
@@ -4790,7 +4790,7 @@ updateSeedTreeRefillData:
 .endif
 
 	ld a,:wxSeedTreeRefillData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,seedTreeRefillLocations
 	ld b,NUM_SEED_TREES
 --
@@ -4806,7 +4806,7 @@ updateSeedTreeRefillData:
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 .include "build/data/seedTreeRefillData.s"
@@ -4972,12 +4972,12 @@ initializeSeedTreeRefillData:
 .endif
 
 	ld a,:wxSeedTreeRefillData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,wxSeedTreeRefillData
 	ld b,NUM_SEED_TREES*8
 	call clearMemory
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;

@@ -1818,12 +1818,12 @@ companionCheckCanSpawn:
 	call objectGetShortPosition
 	ld b,a
 	ld a,:w2SolidObjectPositions
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	ld hl,w2SolidObjectPositions
 	call checkFlag
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	jr z,+
 	pop af
 	jp itemDelete

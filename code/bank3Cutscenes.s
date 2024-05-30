@@ -709,7 +709,6 @@ introCinematic_ridingHorse_state0:
 	call clearMemoryBc
 
 	ld a,:w4TileMap
-	ld ($ff00+R_SVBK),a
 	ld hl,w4TileMap
 	ld bc,$0120
 	call clearMemoryBc
@@ -718,7 +717,6 @@ introCinematic_ridingHorse_state0:
 	ld bc,$0120
 	call clearMemoryBc
 	ld a,$01
-	ld ($ff00+R_SVBK),a
 
 	call clearOam
 	ld a,<wOam+$10
@@ -1610,20 +1608,6 @@ flashScreen_body:
 ; Clears w2FadingBgPalettes, w2FadingSprPalettes (fills contents with $ff), and marks all
 ; palettes as needing refresh?
 clearFadingPalettes_body:
-	ld a,:w2FadingBgPalettes
-	ld ($ff00+R_SVBK),a
-	ld b,$80
-	ld hl,w2FadingBgPalettes
-	ld a,$ff
-	call fillMemory
-
-	ld a,$ff
-	ldh (<hSprPaletteSources),a
-	ldh (<hBgPaletteSources),a
-	ldh (<hDirtySprPalettes),a
-	ldh (<hDirtyBgPalettes),a
-	xor a
-	ld ($ff00+R_SVBK),a
 	ret
 
 .ifdef ROM_AGES
@@ -2157,19 +2141,4 @@ endgameCutsceneHandler_body:
 
 ;;
 clearFadingPalettes2:
-	; Clear w2FadingBgPalettes and w2FadingSprPalettes
-	ld a,:w2FadingBgPalettes
-	ld ($ff00+R_SVBK),a
-	ld hl,w2FadingBgPalettes
-	ld b,$80
-	call clearMemory
-
-	xor a
-	ld ($ff00+R_SVBK),a
-	dec a
-	ldh (<hSprPaletteSources),a
-	ldh (<hDirtySprPalettes),a
-	ld a,$fd
-	ldh (<hBgPaletteSources),a
-	ldh (<hDirtyBgPalettes),a
 	ret

@@ -11,6 +11,7 @@ fileManagementFunction:
 
 ;;
 initializeFile:
+	call changeSRAMBankForce
 	ld hl,initialFileVariables
 	call initializeFileVariables
 
@@ -63,6 +64,7 @@ initializeFile:
 ; In addition to saving, this is called after creating a file, as well as when it's about
 ; to be loaded (for some reason)
 saveFile:
+	call changeSRAMBankForce
 	; Write $01 here for "ages", $00 for "seasons"
 	ld hl,wWhichGame
 .ifdef ROM_AGES
@@ -102,6 +104,7 @@ saveFile:
 
 ;;
 loadFile:
+	call changeSRAMBankForce
 	call verifyFileCopies
 	push af
 	or a
@@ -129,7 +132,7 @@ eraseFile:
 ; @param bc
 @clearFile:
 	ld a,$0a
-	;ld ($1111),a
+	ld ($1111),a
 	ld l,c
 	ld h,b
 	call clearFileAtHl
@@ -210,7 +213,7 @@ verifyFileCopies:
 copyFileFromHlToDe:
 	push hl
 	ld a,$0a
-	;ld ($1111),a
+	ld ($1111),a
 	ld bc,$0550
 	call copyMemoryBc
 	xor a
@@ -225,7 +228,7 @@ copyFileFromHlToDe:
 verifyFileAtHl:
 	push hl
 	ld a,$0a
-	;ld ($1111),a
+	ld ($1111),a
 
 	; Verify checksum
 	call calculateFileChecksum

@@ -18,7 +18,7 @@ initTextbox:
 	ld (wTextboxPosition),a
 ++
 	ld a,$07
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$d000
 	ld bc,w7TextVariablesEnd - $d000
 	call clearMemoryBc
@@ -28,7 +28,7 @@ initTextbox:
 ; Called every frame while a textbox is being shown.
 updateTextbox:
 	ld a,$07
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld d,>w7TextDisplayState
 	ld a,(wTextIsActive)
 	inc a
@@ -1305,7 +1305,7 @@ saveTilesUnderTextbox:
 	push af
 	push hl
 	ld a,(w7TextboxPosBank)
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Copy 2 rows ($40 bytes) to wTmpVramBuffer
 	ld hl,wTmpVramBuffer
@@ -1336,7 +1336,7 @@ saveTilesUnderTextbox:
 
 	; Change back to bank 7,
 	ld a,$07
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop hl
 	push de
 

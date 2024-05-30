@@ -81,7 +81,7 @@ seasonsFunc_0f_6f75:
 	call disableLcd
 	call seasonsFunc_0f_70b4_swapGraphics
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call loadCommonGraphics
 	call fadeinFromWhite
 	ld a,$02
@@ -120,7 +120,7 @@ seasonsFunc_0f_6f75:
 	res 7,(hl)
 	call seasons_func_0f_722f
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,$03
 	ld ($cfc8),a
 	ret
@@ -207,7 +207,7 @@ seasonsFunc_0f_70b4_swapGraphics:
 	call fillMemory
 
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w3VramTiles
 	ld bc,$02c0
 	call clearMemoryBc
@@ -232,7 +232,7 @@ seasonsFunc_0f_70b4_swapGraphics:
 	res 7,(hl)
 	call seasons_func_0f_722f
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 +
 	ld b,(hl)
@@ -242,7 +242,7 @@ seasonsFunc_0f_70b4_swapGraphics:
 	ld (hl),b
 	call seasons_func_0f_712a
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -461,7 +461,7 @@ table_7291:
 ; @param	hl	a few values between $d000-$db00 in bank 6 (w6Filler1, etc)
 seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer:
 	ld a,$06
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,wTmpVramBuffer
 -
 	ldi a,(hl)
@@ -476,7 +476,7 @@ seasonsFunc_0f_7297_copyw6Filler1IntowTmpVramBuffer:
 ; @param	hl	$d802(w3VramTiles)/$dc02(w3TileMappingIndices) in bank 3
 seasonsFunc_0f_72a5_copyFromwTmpVramBufferIntoBank3:
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,wTmpVramBuffer
 ---
 	ld b,$04
@@ -550,7 +550,7 @@ seasons_func_0f_72dc:
 	ret
 ++
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,wTmpVramBuffer
 	ld c,$0a
 --
@@ -581,7 +581,7 @@ seasons_func_0f_7325:
 	ld c,$20
 +
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,$cd47
 --
 	ld b,$04
@@ -607,7 +607,7 @@ seasons_func_0f_7325:
 	ret
 ++
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,wTmpVramBuffer
 --
 	ld b,$04

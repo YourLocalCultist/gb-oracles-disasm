@@ -1428,12 +1428,12 @@ interaction21_subid17:
 
 	; Retrieve whatever tile was there before the chest
 	ld a,:w3RoomLayoutBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,>w3RoomLayoutBuffer
 	ld a,(bc)
 	ld l,a
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,l
 	call setTile
@@ -1601,13 +1601,13 @@ interactionCode22:
 	; wBigBuffer.
 	callab roomInitialization.generateRandomBuffer
 	ld a,:w4RandomBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w4RandomBuffer
 	ld de,wBigBuffer
 	ld b,$00
 	call copyMemory
 	ld a,$01
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ldh a,(<hActiveObject)
 	ld d,a

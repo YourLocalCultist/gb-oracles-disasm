@@ -538,7 +538,7 @@ interactionCode65:
 	ld (de),a
 
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,$80
 	ld hl,$d000
@@ -555,7 +555,7 @@ interactionCode65:
 	call @func_51c0
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	call getFreeInteractionSlot
 	ret nz
@@ -597,7 +597,7 @@ interactionCode65:
 	call func_52d9
 	call func_537e
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldh a,(<hActiveObject)
 	ld d,a
 	ld a,$70
@@ -661,7 +661,7 @@ func_5258:
 	ret
 func_5261:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,($cd09)
 	cpl
 	inc a
@@ -901,14 +901,14 @@ roomTileChangesAfterLoad02_body:
 	jr func_545a
 func_5440:
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	push de
 	ld de,$cd40
 	ld b,$20
 	call copyMemory
 	pop de
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$cd40
 	ld b,$20
 	jp copyMemory
@@ -984,7 +984,7 @@ func_545a:
 	ld c,$03
 	call func_553a
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$d800
 	ld a,$80
 	call func_552a
@@ -1012,7 +1012,7 @@ func_545a:
 	ld a,$0b
 	call func_552a
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop hl
 	pop de
 	ret
@@ -1032,10 +1032,10 @@ func_552a:
 	ret
 func_553a:
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call copyMemory
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 table_5544:
 	.db $00 $d8
@@ -1120,12 +1120,12 @@ interactionCode66:
 	call objectGetShortPosition
 	ld c,a
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,$df
 	ld a,(bc)
 	ld b,a
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	jp setTile
 @subid0:
@@ -1140,7 +1140,7 @@ interactionCode66:
 	ld a,$01
 	ld (de),a
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,$df
 	ld hl,@@table_5610
 	ld a,$a3
@@ -1160,7 +1160,7 @@ interactionCode66:
 	ld l,$57
 	ld (hl),$a2
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 @@table_5610:
 	.db $35 $37 $39 $55

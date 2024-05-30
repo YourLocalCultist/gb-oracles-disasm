@@ -204,12 +204,12 @@ D7randomlyPlaceNonEnemyArmos_body:
 	ld h,$cf
 	ld (hl),$25
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld h,$df
 	ld (hl),$25
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	call getFreeEnemySlot
 	ret nz

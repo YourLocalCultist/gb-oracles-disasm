@@ -874,13 +874,13 @@ endgameCutsceneHandler_20:
 	call refreshObjectGfx
 	call hideStatusBar
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$de90
 	ld b,$08
 	ld a,$ff
 	call fillMemory
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,$07
 	ldh (<hDirtyBgPalettes),a
 	call getFreeInteractionSlot

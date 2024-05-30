@@ -388,10 +388,10 @@ agesFunc_10_7298:
 	ld a,$ff
 	ld (wTmpcbba),a
 	
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,TEXT_BANK
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w7SecretText1
 	ld de,w7d800
 	ld bc,$1800
@@ -401,7 +401,7 @@ agesFunc_10_7298:
 	dec b
 	jr nz,-
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	
 	ld a,GFXH_97
 	call loadGfxHeader

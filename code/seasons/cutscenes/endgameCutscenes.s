@@ -555,13 +555,13 @@ endgameCutsceneHandler_09_stage0_body:
 	call refreshObjectGfx
 	call hideStatusBar
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w2TilesetBgPalettes+$10
 	ld b,$08
 	ld a,$ff
 	call fillMemory
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,$07
 	ldh (<hDirtyBgPalettes),a
 	ld b,$02
@@ -1863,10 +1863,10 @@ endgameCutsceneHandler_0a_stage3:
 	call bank3.generateGameTransferSecret
 	ld a,$ff
 	ld ($cbba),a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w7d800
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w7SecretText1
 	ld de,w7d800
 	ld bc,$1800
@@ -1876,7 +1876,7 @@ endgameCutsceneHandler_0a_stage3:
 	dec b
 	jr nz,-
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,GFXH_97
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_2b

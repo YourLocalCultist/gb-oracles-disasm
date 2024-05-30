@@ -1190,15 +1190,15 @@ blackTowerCompleteCutsceneHandler:
 	or a
 	ret nz
 	call hideStatusBar
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$de90
 	ld b,$30
 	call clearMemory
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	callab bank1.checkDisableUnderwaterWaves
 	xor a
 	ld (wScrollMode),a
@@ -1713,15 +1713,15 @@ pregameIntroCutsceneHandler:
 	jp cutscene_incCutsceneState
 @stateA:
 	call disableLcd
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$de80
 	ld b,$40
 	call clearMemory
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call clearScreenVariablesAndWramBank1
 	call clearOam
 	ld a,PALH_0f
@@ -1781,11 +1781,11 @@ func_6e9a:
 	jp clearMemoryBc
 
 func_6eb7:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	
 	ld hl,w3VramTiles
 	ld bc,$0240
@@ -1797,15 +1797,15 @@ func_6eb7:
 	call fillMemoryBc
 	
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 	
 func_6ed6:
 	ldh (<hFF8B),a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$04
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$d000
 	ld bc,$0240
 	call clearMemoryBc
@@ -1814,7 +1814,7 @@ func_6ed6:
 	ldh a,(<hFF8B)
 	call fillMemoryBc
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 func_6ef7:
@@ -1916,27 +1916,27 @@ cutscene_decCBB3whenFadeDone:
 	jp decCbb3
 
 func_6f9e:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$de90
 	ld b,$30
 	call clearMemory
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 func_6fb0:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w2FadingBgPalettes
 	ld b,$80
 	call clearMemory
 	
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call hideStatusBar
 	ld a,$fc
 	ldh (<hBgPaletteSources),a
@@ -2048,7 +2048,7 @@ func_701d:
 	ld bc,$260c
 	call func_70f7
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call reloadTileMap
 	ld a,SND_DOORCLOSE
 	call playSound
@@ -2098,7 +2098,7 @@ wallRetraction_dungeon8:
 	ld bc,$4d04
 	call func_70f7
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call reloadTileMap
 	ld a,SND_DOORCLOSE
 	call playSound
@@ -2152,12 +2152,12 @@ func_712f:
 	ld b,a
 -
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,(de)
 	inc de
 	ldh (<hFF8B),a
 	ld a,:w3VramTiles
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldh a,(<hFF8B)
 	ldi (hl),a
 	dec b
@@ -2389,7 +2389,7 @@ func_03_7244:
 	
 @@func_72ec:
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call clearItems
 	call clearEnemies
 	call clearParts
@@ -2423,7 +2423,7 @@ func_03_7244:
 	callab tilesets.func_04_6f07
 +
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld bc,$02c0
 	ld hl,$d800
 	call clearMemoryBc
@@ -2579,7 +2579,7 @@ func_745c:
 	push bc
 	push hl
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,$00
 --
 	ld a,(hl)

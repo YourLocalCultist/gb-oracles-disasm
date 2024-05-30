@@ -1154,10 +1154,10 @@ interactionCodeb6:
 	; Do something with w3VramAttributes ($400 bytes ahead)?
 	ld bc,$0400
 	add hl,bc
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3VramAttributes
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,$04
 ---
 	ld c,$04
@@ -1177,7 +1177,7 @@ interactionCodeb6:
 	jr nz,---
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call interactionIncState
 	ld l,Interaction.counter1
 	ld (hl),$08
@@ -1223,10 +1223,10 @@ interactionCodeb6:
 	pop de
 
 	; Draw the next frame of the tree's disappearance
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3VramTiles
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,$04
 ---
 	ld c,$04
@@ -1245,7 +1245,7 @@ interactionCodeb6:
 	jr nz,---
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,UNCMP_GFXH_29
 	call loadUncompressedGfxHeader
 

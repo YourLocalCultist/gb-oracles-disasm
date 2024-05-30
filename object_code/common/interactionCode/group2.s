@@ -927,10 +927,10 @@ shopItemUpdateRupeeDisplay:
 	call shopItemGetTilesForRupeeDisplay
 	ret nc
 ++
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3VramTiles
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	push de
 	ldi a,(hl)
 	ld e,a
@@ -952,7 +952,7 @@ shopItemUpdateRupeeDisplay:
 
 	pop de
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,wInShop
 	set 2,(hl)
 	ret

@@ -451,10 +451,10 @@ giveTreasure_body:
 ; Decides on one ring to remove by counting all of the unappraised rings and finding the
 ; one with the most duplicates.
 @removeOneDuplicateRing:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w4TmpRingBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Construct w4TmpRingBuffer such that each index corresponds to how many
 	; unappraised rings of that index Link has.
@@ -500,7 +500,7 @@ giveTreasure_body:
 
 	; Restore wram bank
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Search for an instance of the ring to be replaced in wUnappraisedRings
 

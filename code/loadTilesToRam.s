@@ -3,7 +3,7 @@
 ; loaded in wRoomLayout.
 generateW3VramTilesAndAttributes:
 	ld a,:w3VramTiles
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,wRoomLayout
 	ld de,w3VramTiles
 	ld c,$0b
@@ -71,7 +71,7 @@ updateChangedTileQueue:
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -90,7 +90,7 @@ updateChangedTileQueue:
 	rst_addDoubleIndex
 
 	ld a,:w2ChangedTileQueue
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; b = New value of tile
 	; c = position of tile
@@ -101,10 +101,10 @@ updateChangedTileQueue:
 	ld a,c
 	ldh (<hFF8C),a
 
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3VramTiles
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call getVramSubtileAddressOfTile
 
 	ld a,b
@@ -127,7 +127,7 @@ updateChangedTileQueue:
 	call queueTileWriteAtVBlank
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -184,10 +184,10 @@ getVramSubtileAddressOfTile:
 setInterleavedTile_body:
 	ldh (<hFF8B),a
 
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3TileMappingData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ldh a,(<hFF8F)
 	call setHlToTileMappingDataPlusATimes8
@@ -271,7 +271,7 @@ setInterleavedTile_body:
 	ld hl,$cec8
 	call queueTileWriteAtVBlank
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;

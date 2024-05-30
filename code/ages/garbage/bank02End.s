@@ -13,18 +13,18 @@ fake_readParametersForRectangleDrawing:
 
 ;;
 fake_drawRectangleToVramTiles_withParameters:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	jr fake_drawRectangleToVramTiles@nextRow
 
 ;;
 fake_drawRectangleToVramTiles:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call $7de3
 
 @nextRow:
@@ -48,7 +48,7 @@ fake_drawRectangleToVramTiles:
 	jr nz,@nextRow
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -58,7 +58,7 @@ fake_copyRectangleFromVramTilesToAddress_paramBc:
 
 ;;
 fake_copyRectangleFromVramTilesToAddress:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 
 	ldi a,(hl)
@@ -77,11 +77,11 @@ fake_copyRectangleFromVramTilesToAddress:
 	push bc
 --
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldi a,(hl)
 	ld b,a
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	ld (de),a
 	inc de
@@ -98,7 +98,7 @@ fake_copyRectangleFromVramTilesToAddress:
 	jr nz,@nextRow
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;

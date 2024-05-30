@@ -175,7 +175,7 @@ seasonsTable_03_6844:
 
 seasonsFunc_03_684c:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,($cbb8)
 	and $07
 	ld hl,$d800
@@ -190,8 +190,8 @@ seasonsFunc_03_684c:
 	ld de,$d9f0
 	ld b,$10
 	call copyMemory
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	ld hl,$d9e0
 	ld de,$94e1
 	ld bc,$0102
@@ -471,7 +471,7 @@ cutsceneHandler_0c_stage5:
 
 seasonsFunc_03_6a9d:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,($cbbe)
 	dec a
 	and $03
@@ -485,8 +485,8 @@ seasonsFunc_03_6a9d:
 	rst_addDoubleIndex
 	ld de,$d9e0
 	call seasonsFunc_03_6b22
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	ld hl,$d9e0
 	ld de,$8ce0
 	ld bc,$0102
@@ -498,7 +498,7 @@ seasonsFunc_03_6aca:
 	jr nz,seasonsFunc_03_6a9d
 	ld (hl),$10
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,($cbbe)
 	ld hl,seasonsTable_03_6b1a
 	rst_addDoubleIndex
@@ -514,8 +514,8 @@ seasonsFunc_03_6aca:
 	rst_addDoubleIndex
 	ld de,$d9e0
 	call seasonsFunc_03_6b22
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	ld hl,$d9c0
 	ld de,$88e1
 	ld bc,$0102

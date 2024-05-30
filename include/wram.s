@@ -47,6 +47,9 @@ wSoundDisabled: ; $c01b
 wc01c: ; $c01c
 	db
 
+wSRAMBank:
+	db
+
 wSoundCmd: ; $c01d
 	db
 

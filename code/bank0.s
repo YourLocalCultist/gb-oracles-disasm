@@ -305,6 +305,24 @@ addDecimalToHlRef:
 	ldd (hl),a
 	ret
 
+changeSRAMBank:
+	ld (wSRAMBank),a
+	ld a,$00
+	ld (MBC_ENABLE_RAM),a
+	ld a,(wSRAMBank)
+	ld (MBC_RAM_BANK),a
+	ld a,$0a
+	ld (MBC_ENABLE_RAM),a
+	ret
+
+changeSRAMBankForce:
+	ld a,$00
+	ld (MBC_ENABLE_RAM),a
+	ld (MBC_RAM_BANK),a
+	ld a,$0a
+	ld (MBC_ENABLE_RAM),a
+	ret
+
 ;;
 ; Subtract a bcd-encoded number from a 16-bit memory address. If it would go below 0, the
 ; result is 0.
@@ -1006,13 +1024,13 @@ initializeVramMap1:
 loadPaletteHeader:
 	push de
 	ld l,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,:bank1Moveable.paletteHeaderTable
 	setrombank
 	ld a,l
@@ -1108,7 +1126,7 @@ loadPaletteHeader:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop de
 	ret
 
@@ -1159,12 +1177,12 @@ queueDmaTransfer:
 ; If LCD is off, copy data immediately?
 	ldh a,(<hRomBank)
 	push af
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	push de
 	push hl
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	setrombank
 	pop de
 	ld hl, HDMA1
@@ -1180,7 +1198,7 @@ queueDmaTransfer:
 	ldi (hl),a
 	ld (hl),b
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop af
 	setrombank
 	xor a
@@ -1191,7 +1209,7 @@ queueDmaTransfer:
 ; @trashes{bc,de,hl}
 loadUncompressedGfxHeader:
 	ld e,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -1239,14 +1257,14 @@ loadUncompressedGfxHeader:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
 ; @param	a	The index of the gfx header to load
 loadGfxHeader:
 	ld e,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -1294,7 +1312,7 @@ loadGfxHeader:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -1308,7 +1326,7 @@ decompressGraphics:
 	ld a,e
 	and $0f
 	ld ($ff00+R_VBK),a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	xor e
 	ld e,a
 	ld a,c
@@ -1539,7 +1557,7 @@ readByteSequential:
 ; @param	a	Tileset to load (tilesets include collision data and tile indices)
 loadTileset:
 	ld e,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -1622,7 +1640,7 @@ loadTileset:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -1637,7 +1655,7 @@ loadTilesetHlpr:
 	ld a,e
 	and $0f
 	ld ($ff00+R_VBK),a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	xor e
 	ld e,a
 ----
@@ -1879,7 +1897,7 @@ _nextThread:
 	ld sp,wMainStackTop
 	ld h,>wThreadStateBuffer
 	ld a,$01
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	jr _mainLoop_nextThread
 
 ;;
@@ -1938,7 +1956,7 @@ _mainLoop_nextThread:
 
 	callfrombank0 bank3f.refreshDirtyPalettes
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$c49e
 	inc (hl)
 	ld hl,wGfxRegs1
@@ -2101,7 +2119,7 @@ vblankInterrupt:
 
 	ld a,($ff00+R_VBK)
 	ld b,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	push bc
 
@@ -2116,7 +2134,7 @@ vblankInterrupt:
 
 	pop bc
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	ld ($ff00+R_VBK),a
 
@@ -2298,7 +2316,7 @@ vblankFunction0ad9:
 vblankDmaFunction:
 	pop hl
 	ldi a,(hl)
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld ($2222),a
 	ldi a,(hl)
 	ld ($ff00+R_HDMA1),a
@@ -2320,7 +2338,7 @@ vblankDmaFunction:
 ; Update all palettes marked as dirty.
 updateDirtyPalettes:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ldh a,(<hDirtyBgPalettes)
 	ld d,a
@@ -4197,7 +4215,7 @@ func_1383:
 	ld (wActiveRoom),a
 	ld a,b
 	ld (wScreenTransitionDirection),a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -4224,7 +4242,7 @@ func_1383:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop de
 	ret
 
@@ -4238,7 +4256,7 @@ func_1383:
 ; @param	a	Amplitude
 initWaveScrollValues:
 	ldh (<hFF93),a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -4252,7 +4270,7 @@ initWaveScrollValues:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -4262,7 +4280,7 @@ initWaveScrollValues:
 ; @param	a	Affects the frequency of the wave?
 loadBigBufferScrollValues:
 	ldh (<hFF93),a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -4276,7 +4294,7 @@ loadBigBufferScrollValues:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -4286,7 +4304,7 @@ func_13c6:
 	ldh a,(<hRomBank)
 	push af
 	ld a,:w2ColorComponentBuffer1
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	push de
 	push bc
 	ld de,w2ColorComponentBuffer1
@@ -4298,7 +4316,7 @@ func_13c6:
 	pop af
 	setrombank
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	jp startFadeBetweenTwoPalettes
 
 ;;
@@ -4363,15 +4381,15 @@ setTileWithoutGfxReload:
 ; @param	b	New index for tile
 ; @param	c	Position to change
 setTileInRoomLayoutBuffer:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3RoomLayoutBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	ld b,>w3RoomLayoutBuffer
 	ld (bc),a
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -4712,10 +4730,10 @@ retrieveTileCollisionValue:
 	ld h,>w3TileCollisions
 	ld l,a
 	ld a,:w3TileCollisions
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld l,(hl)
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,l
 	ret
 
@@ -4723,7 +4741,7 @@ retrieveTileCollisionValue:
 ; Load data into wRoomCollisions based on wRoomLayout and w3TileCollisions
 loadRoomCollisions:
 	ld a,:w3TileCollisions
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld d,>w3TileCollisions
 	ld hl,wRoomLayout
 	ld b,LARGE_ROOM_HEIGHT*$10
@@ -4739,7 +4757,7 @@ loadRoomCollisions:
 
 	call @blankDataAroundCollisions
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -4818,20 +4836,20 @@ getTileIndexFromRoomLayoutBuffer:
 
 ;;
 getTileIndexFromRoomLayoutBuffer_paramC:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w3RoomLayoutBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld b,>w3RoomLayoutBuffer
 	ld a,(bc)
 	ld e,a
 	ld a,:w3TileCollisions
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld l,e
 	ld h,>w3TileCollisions
 	ld b,(hl)
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	cp $10
 	jr nc,++
@@ -4963,7 +4981,7 @@ loadObjectGfx2:
 	pop de
 	ld c,:w4GfxBuf1
 	ld a,$01
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,BANK_3f
 	setrombank
 	ld b,$1f
@@ -4981,7 +4999,7 @@ loadObjectGfx2:
 	ld b,$1f
 	call decompressGraphics
 	ld a,$01
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,BANK_3f
 	setrombank
 	ret
@@ -5750,7 +5768,7 @@ openSecretInputMenu:
 ;;
 ; @param[out]	zflag	Set if no menu is being displayed.
 updateMenus:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -5760,7 +5778,7 @@ updateMenus:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,(wOpenedMenuType)
 	or a
 	ret
@@ -5850,7 +5868,7 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 	ld h,$08
 +++
 	ld l,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -5860,7 +5878,7 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -8249,10 +8267,10 @@ objectMimicBgTile:
 	ld bc,w2TilesetBgPalettes
 	call addAToBc
 
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w2TilesetBgPalettes
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Copy the background palette to sprite palette 6
 	ld hl,w2TilesetSprPalettes+6*8
@@ -8269,7 +8287,7 @@ objectMimicBgTile:
 	set 6,(hl)
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -8744,12 +8762,12 @@ objectMarkSolidPosition:
 	call objectGetShortPosition
 	ld b,a
 	ld a,:w2SolidObjectPositions
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	ld hl,w2SolidObjectPositions
 	call setFlag
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	ret
 
 ;;
@@ -8757,12 +8775,12 @@ objectUnmarkSolidPosition:
 	call objectGetShortPosition
 	ld b,a
 	ld a,:w2SolidObjectPositions
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,b
 	ld hl,w2SolidObjectPositions
 	call unsetFlag
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	ret
 
 .endif
@@ -11014,13 +11032,13 @@ getActiveRoomFromDungeonMapPosition:
 getRoomInDungeon:
 	ldh (<hFF8B),a
 	ld a, :w2DungeonLayout
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	call getDungeonLayoutAddress
 	ldh a,(<hFF8B)
 	rst_addAToHl
 	ld l,(hl)
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,l
 	ret
 
@@ -11965,7 +11983,7 @@ setPaletteThreadDelay:
 ;;
 paletteFadeThreadStart:
 	ld a,:w2TilesetBgPalettes
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	callfrombank0 bank1.paletteFadeHandler
 	call          bank1.checkLockBG7Color3ToBlack
@@ -12310,7 +12328,7 @@ seasonsFunc_34a0:
 ;;
 clearWramBank1:
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,$d000
 	ld bc,$1000
 	jp clearMemoryBc
@@ -12497,19 +12515,19 @@ checkDungeonUsesToggleBlocks:
 
 .else ; ROM_SEASONS
 seasonsFunc_35cc:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
 	push bc
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	callfrombank0 bank1.paletteThread_calculateFadingPalettes
 	pop bc
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 func_35ec:
@@ -12681,7 +12699,7 @@ loadTilesetLayout:
 	setrombank
 
 	ld a,:w3TileMappingData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w3TileMappingIndices
 	ld de,w3TileMappingData
 	ld b,$00
@@ -12694,7 +12712,7 @@ loadTilesetLayout:
 
 .ifdef ROM_SEASONS
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 .else ; ROM_AGES
@@ -12933,8 +12951,8 @@ loadUniqueGfxHeaderEntry:
 	ld b,a
 	call queueDmaTransfer
 	pop hl
-	ld a,$00
-	ld ($ff00+R_SVBK),a
+	;ld a,$00
+	;call changeSRAMBank
 	ld a,:animationAndUniqueGfxData.uniqueGfxHeaderTable
 	setrombank
 	ldi a,(hl)
@@ -12984,14 +13002,14 @@ loadTilesetAndRoomLayout:
 
 	; Copy wRoomLayout to w3RoomLayoutBuffer
 	ld a,:w3RoomLayoutBuffer
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w3RoomLayoutBuffer
 	ld de,wRoomLayout
 	ld b,_sizeof_wRoomLayout
 	call copyMemoryReverse
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop af
 	setrombank
 	ret
@@ -13340,7 +13358,7 @@ loadRoomLayout:
 ; changes to them.
 ;
 generateVramTilesWithRoomChanges:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -13357,7 +13375,7 @@ generateVramTilesWithRoomChanges:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -13370,11 +13388,11 @@ generateVramTilesWithRoomChanges:
 ; @param[out]	c	Top-left tile index
 getTileMappingData:
 	ld c,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 
 	ld a,:w3TileMappingData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,c
 	call setHlToTileMappingDataPlusATimes8
@@ -13400,7 +13418,7 @@ getTileMappingData:
 	ld a,(wTmpcec0)
 	ld c,a
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -13432,10 +13450,10 @@ setTile:
 	ld a,e
 	ld (wChangedTileQueueTail),a
 
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w2ChangedTileQueue
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	; Populate the new entry for the queue
 	ld a,e
@@ -13451,7 +13469,7 @@ setTile:
 	call setTileWithoutGfxReload
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	or h
 	ret
 
@@ -13488,7 +13506,7 @@ setTileInAllBuffers:
 setInterleavedTile:
 	push de
 	ld e,a
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	ld c,a
 	ldh a,(<hRomBank)
 	ld b,a
@@ -13503,7 +13521,7 @@ setInterleavedTile:
 	ld a,b
 	setrombank
 	ld a,c
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop de
 	ret
 
@@ -14204,7 +14222,7 @@ checkLinkCanSurface:
 ; @param	hl	Address to copy from
 copy256BytesFromBank:
 	ld a,e
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,c
 	setrombank
 	ld e,$00

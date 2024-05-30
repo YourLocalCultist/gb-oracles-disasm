@@ -11,8 +11,8 @@ init:
 	ld ($ff00+R_TAC),a
 	ld ($ff00+R_SC),a
 	
-	ld a,$0a
-	ld ($1111),a
+	ld a,$01
+	ld (MBC_RAM_MODE),a
 	xor a
 
 	call disableLcd
@@ -24,9 +24,9 @@ init:
 	; Initialize CGB registers
 	xor a
 	ld ($ff00+R_RP),a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld ($ff00+R_VBK),a
-	call setCpuToDoubleSpeed
+	;call setCpuToDoubleSpeed
 +
 	ld hl,hActiveFileSlot
 	ld b,hramEnd-hActiveFileSlot
@@ -175,15 +175,15 @@ generateGameTransferSecret:
 ; @param[out]	zflag	Generally set on success
 secretFunctionCaller_body:
 	push de
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,TEXT_BANK
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	call @jumpTable
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop de
 	ret
 

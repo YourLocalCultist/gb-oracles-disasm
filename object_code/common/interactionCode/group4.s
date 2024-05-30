@@ -260,10 +260,10 @@ interactionCode89:
 	or a
 	ret nz
 
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w4RingFortuneStuff
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldh a,(<hFFBD)
 	ld b,a
 	ld a,($cbc2)
@@ -272,7 +272,7 @@ interactionCode89:
 	ld c,a
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,b
 	or e
@@ -313,10 +313,10 @@ interactionCode89:
 	jp interactionIncSubstate
 
 @state5Substate4:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w4RingFortuneStuff
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ldh a,(<hFFBD)
 	ld b,a
@@ -324,7 +324,7 @@ interactionCode89:
 	ld e,a
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,b
 	or e

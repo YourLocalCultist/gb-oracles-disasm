@@ -1,9 +1,9 @@
 ;;
 initGbaModePaletteData:
-	ld a,($ff00+R_SVBK)
+	ld a,(wSRAMBank)
 	push af
 	ld a,:w2GbaModePaletteData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld hl,gbaModePaletteData
 	ld de,w2GbaModePaletteData
@@ -11,14 +11,14 @@ initGbaModePaletteData:
 	call copyMemory
 
 	pop af
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
 ; Redraw dirty palettes
 refreshDirtyPalettes:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ldh a,(<hDirtyBgPalettes)
 	ld d,a

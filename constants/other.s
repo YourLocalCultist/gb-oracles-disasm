@@ -1,7 +1,7 @@
 ; "Garbage" files get included in the vanilla, US version of Ages only
 .ifdef BUILD_VANILLA
 .ifdef REGION_US
-	.define INCLUDE_GARBAGE
+	;.define INCLUDE_GARBAGE
 .endif
 .endif
 

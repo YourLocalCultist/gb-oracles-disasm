@@ -5619,7 +5619,7 @@ itemMimicBgTile:
 	rst_addAToHl
 	push de
 	ld a,:w2TilesetSprPalettes
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld de,w2TilesetSprPalettes+7*8
 	ld b,$08
 	call copyMemory
@@ -5629,7 +5629,7 @@ itemMimicBgTile:
 	set 7,(hl)
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	pop de
 	ret
 

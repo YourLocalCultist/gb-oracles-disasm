@@ -198,7 +198,7 @@ setPastCliffPalettesToRed:
 
 	; Replace all attributes that have palette "6" with palette "0"
 	ld a,:w3TileMappingData
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,w3TileMappingData + $204
 	ld d,$06
 ---
@@ -224,14 +224,14 @@ setPastCliffPalettesToRed:
 	jr c,---
 @done:
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 
 ;;
 func_04_6e9b:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,wRoomLayout
 	ld de,$d000
 	ld b,$c0
@@ -245,11 +245,11 @@ func_04_6e9b:
 	ld b,$c0
 --
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldi a,(hl)
 	ld c,a
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,c
 	ld (de),a
 	inc de
@@ -257,13 +257,13 @@ func_04_6e9b:
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
 func_04_6ed1:
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld hl,wRoomLayout
 	ld de,$d000
 	ld b,$c0
@@ -277,19 +277,19 @@ func_04_6ed1:
 	ld b,$c0
 --
 	ld a,$02
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,(de)
 	inc de
 	ld c,a
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ld a,c
 	ldi (hl),a
 	dec b
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
@@ -303,11 +303,11 @@ func_04_6f07:
 	ld bc,$0200
 @locFunc:
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldi a,(hl)
 	ldh (<hFF8B),a
 	ld a,$06
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldh a,(<hFF8B)
 	ld (de),a
 	inc de
@@ -328,11 +328,11 @@ func_04_6f31:
 	ld bc,$0200
 @locFunc:
 	ld a,$06
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldi a,(hl)
 	ldh (<hFF8B),a
 	ld a,$03
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ldh a,(<hFF8B)
 	ld (de),a
 	inc de

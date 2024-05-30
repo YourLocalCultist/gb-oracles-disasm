@@ -79,7 +79,7 @@ fileSelect_redrawDecorations:
 	pop af
 	setrombank
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 

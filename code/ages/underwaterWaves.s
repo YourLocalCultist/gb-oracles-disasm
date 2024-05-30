@@ -23,7 +23,7 @@ checkUpdateUnderwaterWaves:
 	ret z
 
 	ld a,:w2WaveScrollValues
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 
 	ld a,(wGfxRegs2.SCX)
 	ld c,a
@@ -48,7 +48,7 @@ checkUpdateUnderwaterWaves:
 	jr nz,--
 
 	xor a
-	ld ($ff00+R_SVBK),a
+	call changeSRAMBank
 	ret
 
 ;;
